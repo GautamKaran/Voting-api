@@ -1,0 +1,23 @@
+{
+  "name": "voting-api",
+  "version": "1.0.0",
+  "description": "This Voting API allows users to register and log in using their Aadhar card numbers. Users can view a list of candidates and cast their votes, with the each user can vote only once. The api also provides live vote counts for candidates, displayed in sorted order. An admin can manage the candidate list but is not permitted to vote. Additionally, users can change their passwords, ensuring a secure voting environment.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "Aadhar-Based Secure Voting API",
+    "voting",
+    "api",
+    "aadhar",
+    "nodejs",
+    "express"
+  ],
+  "author": "karan kumar Gautam",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
