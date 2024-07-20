@@ -88,6 +88,7 @@ To run this project, you will need to add the following environment variables to
 PORT=3000
 MONGODB_URI=mongodb+srv://your-username:your-password@cluster0.lxl3fsq.mongodb.net
 mongoDB_local_URL=mongodb://localhost:27017/
+CORS_ORIGIN=*
 ```
 
 ## Start the Server
