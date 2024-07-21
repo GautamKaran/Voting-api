@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    aadharCardNumber: {
+      type: Number,
+      required: true,
+      unqiue: true,
+    },
     password: {
       type: String,
       required: true,
