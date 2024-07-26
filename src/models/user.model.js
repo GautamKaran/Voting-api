@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 // define the User Schema
 const userSchema = new mongoose.Schema(
@@ -48,6 +49,29 @@ const userSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// password hash
+userSchema.pre("save", async function (next) {
+  try {
+    if (!this.isModified("password")) return next();
+
+    this.password = await bcrypt.hash(this.password, 10);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+// hash password compare with user provided password
+userSchema.methods.isPasswordCorrect = async function (password) {
+  try {
+    const isMatch = await bcrypt.compare(password, this.password);
+
+    return isMatch;
+  } catch (error) {
+    throw new Error("Password comparison failed !!");
+  }
+};
 
 // Create User model
 const User = mongoose.model("User", userSchema);
