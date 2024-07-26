@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 // define the User Schema
 const userSchema = new mongoose.Schema(
@@ -44,6 +45,9 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    refreshToken: {
+      type: String,
+    },
   },
   {
     timestamps: true,
@@ -71,6 +75,35 @@ userSchema.methods.isPasswordCorrect = async function (password) {
   } catch (error) {
     throw new Error("Password comparison failed !!");
   }
+};
+
+// Method to generate an access token for the user
+userSchema.methods.generateAccessToken  = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+      email: this.email,
+      username: this.username,
+      fullname: this.fullname,
+    },
+    process.env.ACCESS_TOKEN_SECRET,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    }
+  );
+};
+
+// Method to generate a refresh token for the user
+userSchema.methods.genreteRefreshToken = function () {
+  return jwt.sign(
+    {
+      _id: this._id,
+    },
+    process.env.REFRESH_TOKEN_SECRET,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
+    }
+  );
 };
 
 // Create User model
