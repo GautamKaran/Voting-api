@@ -1,5 +1,22 @@
 import User from "../models/user.model.js";
 
+const genreteAccessAndRefreshToken = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.genreteRefreshToken();
+
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new Error(
+      "Something went wrong while generating refesh and access token "
+    );
+  }
+};
+
 const signupUser = async (req, res) => {
   /**
    * ____________________________________
@@ -35,8 +52,16 @@ const signupUser = async (req, res) => {
 
     // step2: Validate all fields are not empty.
     if (
-      [name, age, email, mobileNumber, address, aadharCardNumber, password, role]
-        .some((field) => !field)
+      [
+        name,
+        age,
+        email,
+        mobileNumber,
+        address,
+        aadharCardNumber,
+        password,
+        role,
+      ].some((field) => !field)
     ) {
       return res.status(400).json({ error: "All fields are required" });
     }
@@ -99,5 +124,73 @@ const signupUser = async (req, res) => {
   }
 };
 
+const singinUser = async (req, res) => {
+  try {
+    /**
+     * ________________________________________
+     *                                         *
+     *      User Sign-In Algorithm             *
+     * ________________________________________*
+     *
+     * step1: Get AadharCardNumber and password from frontend.
+     * step2: Validate that all fields are not empty.
+     * step3: Find the user with AadharCardNumber.
+     * step4: Check if the password is correct.
+     * step5: Generate Access and refresh token.
+     * step6: Send the Access and refresh tokens in the response cookies.
+     */
 
-export { signupUser };
+    // step1:  Get AadharCardNumber and password from frontend.
+    const { aadharCardNumber, password } = req.body;
+
+    // step2: Validate that all fields are not empty.
+    if (!aadharCardNumber || !password) {
+      return res
+        .status(400)
+        .json({ error: "Aadhar Card Number and password are required" });
+    }
+
+    // step3: Find the user with AadharCardNumber.
+    const user = await User.findOne({ aadharCardNumber });
+
+    if (!user) {
+      return res.status(404).json({ error: "Invalid Aadhar Card Number" });
+    }
+
+    // step4: Check if the password is correct.
+    const isPasswordValid = await user.isPasswordCorrect(password);
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid Password !!" });
+    }
+
+    // step5: Generate Access and refresh token.
+    const { accessToken, refreshToken } = await genreteAccessAndRefreshToken(
+      user._id
+    );
+
+    const signedInUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
+
+    // step6: Send the Access and refresh tokens in the response cookies.
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json({
+        status: 200,
+        user: { signedInUser, accessToken, refreshToken },
+        message: "User Sing-In Successfully",
+      });
+  } catch (error) {
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { signupUser, singinUser };
