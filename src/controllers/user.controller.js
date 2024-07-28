@@ -193,4 +193,51 @@ const singinUser = async (req, res) => {
   }
 };
 
-export { signupUser, singinUser };
+const singOutUser = async (req, res) => {
+  /**
+   * ________________________________________
+   *                                         *
+   *      User Sign-Out Algorithm            *
+   * ________________________________________*
+   *
+   * step 1: verifyJWT middleware provides req.user
+   * step 2: Set refreshToken to null for the user in the database
+   * step 3: Clear cookies (accessToken and refreshToken), proper message
+   *
+   */
+
+  try {
+    // step 1: verifyJWT middleware provides req.user
+    const userId = req.user._id;
+
+    // step 2: Set refreshToken to null for the user in the database
+    await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: {
+          refreshToken: null,
+        },
+      },
+      {
+        new: true,
+      }
+    );
+
+    // step 3: Clear cookies (accessToken and refreshToken)
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    return res
+      .status(200)
+      .clearCookie("accessToken", options)
+      .clearCookie("refreshToken", options)
+      .json({ message: "User SignOut!" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Sign-out Failed!", error: error.message });
+  }
+};
+export { signupUser, singinUser, singOutUser };
