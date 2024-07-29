@@ -3,6 +3,7 @@ import {
   signupUser,
   singinUser,
   singOutUser,
+  getProfile,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
@@ -13,5 +14,6 @@ router.route("/signin").post(singinUser);
 
 // secure route
 router.route("/signout").post(verifyJWT, singOutUser);
+router.route("/profile").get(verifyJWT, getProfile);
 
 export default router;

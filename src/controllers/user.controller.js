@@ -240,4 +240,15 @@ const singOutUser = async (req, res) => {
       .json({ message: "Sign-out Failed!", error: error.message });
   }
 };
-export { signupUser, singinUser, singOutUser };
+
+const getProfile = async (req, res) => {
+  try {
+    const user = req.user;
+
+    return res.status(200).json({ userDetails: user });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export { signupUser, singinUser, singOutUser, getProfile };
