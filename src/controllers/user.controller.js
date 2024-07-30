@@ -251,4 +251,56 @@ const getProfile = async (req, res) => {
   }
 };
 
-export { signupUser, singinUser, singOutUser, getProfile };
+const ChangePassword = async (req, res) => {
+  /**
+   * ________________________________________
+   *                                         *
+   *      User ChangePassword Algorithm      *
+   * ________________________________________*
+   *
+   * step 1: verifyJWT middleware provides req.user._id
+   * step 2: get oldPassword, newPassword from frontend.
+   * step 3: check if oldPassword matches password in database, if not, return an error.
+   * step 4: hash newPassword and save it to the database.
+   *
+   */
+  try {
+    // step 1: verifyJWT middleware provides req.user._id
+    const userID = req.user._id;
+
+    // step 2: get oldPassword, newPassword from frontend.
+    const { oldPassword, newPassword } = req.body;
+
+    // Check if both fields are provided
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ error: "Both fields are required!" });
+    }
+
+    // Find user by ID and exclude refreshToken
+    const user = await User.findById(userID).select("-refreshToken");
+
+    // Check if user exists
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // step 3: check if oldPassword matches the password in the database
+    const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+    if (!isPasswordCorrect) {
+      return res.status(400).json({ error: "Old password is incorrect" });
+    }
+
+    // step 4: hash newPassword and save it to the database
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+export { signupUser, singinUser, singOutUser, getProfile, ChangePassword };
