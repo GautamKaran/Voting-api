@@ -1,4 +1,6 @@
 import User from "../models/user.model.js";
+import { EmailSenderMethod } from "../utils/EmailSenderMedhod.js";
+import jwt from "jsonwebtoken";
 
 const genreteAccessAndRefreshToken = async (userId) => {
   try {
@@ -302,5 +304,91 @@ const ChangePassword = async (req, res) => {
   }
 };
 
+const forgetPassword = async (req, res) => {
+  try {
+    /**
+     * ________________________________________
+     *                                         *
+     *      User forget-password Algorithm      *
+     * ________________________________________*
+     *
+     * step1: Extract user from req.user.
+     * step2: Generate access token.
+     * Step3: Send email with reset link.
+     */
 
-export { signupUser, singinUser, singOutUser, getProfile, ChangePassword };
+    // step1: Extract user from req.user.
+    const user = req.user;
+
+    // step2: Generate access token.
+    const { accessToken } = await genreteAccessAndRefreshToken(user._id);
+
+    // Step3: Send email with reset link.
+    await EmailSenderMethod(
+      user.email,
+      "forget password",
+      `
+      <p>hey ${user.name} check here to reset you password: </p>
+     <button> <a href="${process.env.BASE_URL}/api/v1/users/reset/${accessToken}">Check me</a></button>
+    `
+    );
+
+    res.status(200).json({ message: "Please check your inbox for the email." });
+  } catch (error) {
+    console.error("Error in forgetPassword:", error.message);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const reset = async (req, res) => {
+  try {
+    /**
+     * ________________________________________
+     *                                         *
+     *      User reset Algorithm               *
+     * ________________________________________*
+     *
+     * step1: Extract user from req.params.token.
+     * step2: Generate access token.
+     * Step3: Send email with reset link.
+     */
+
+    // step1: Extract user from req.params.token.
+    const token = req.params.token;
+
+    if (!token) {
+      return res.status(404).json({ error: "Unauthorized request" });
+    }
+
+    // Step 2: Verify the token
+    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+
+    // Step 3: Find user by ID from the token
+    const user = await User.findById(decodedToken?._id);
+    if (!user) {
+      return res.status(400).json({ message: "user noty fond" });
+    }
+
+    // Step 4: Extract the new password from the request body
+    const { newPassword } = req.body;
+
+    // Step 6: Save the updated user
+    user.password = newPassword;
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export {
+  signupUser,
+  singinUser,
+  singOutUser,
+  getProfile,
+  ChangePassword,
+  forgetPassword,
+  reset,
+};
