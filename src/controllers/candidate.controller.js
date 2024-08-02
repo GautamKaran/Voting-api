@@ -83,4 +83,39 @@ const updatedCandidate = async (req, res) => {
   }
 };
 
-export { createNewCandidate, updatedCandidate };
+const deleteCandidate = async (req, res) => {
+  try {
+    if (!checkAdminRole(req.user)) {
+      return res.status(403).json({ message: "Access denied" });
+    }
+
+    const candidateID = req.params.candidateID;
+
+    // check id empty candidateID
+    if (!candidateID) {
+      return res.status(400).json({ message: "Candidate ID is required" });
+    }
+
+    // check mongoose object id is valid
+    if (!mongoose.Types.ObjectId.isValid(candidateID)) {
+      return res.status(400).json({ message: "Invalid Candidate ID" });
+    }
+
+    // delete by candiateID
+    const response = await Candidate.findByIdAndDelete(candidateID);
+
+    // check candidatefind and delete
+    if (!response) {
+      return res.status(404).json({ error: "Candidate not found" });
+    }
+
+    // send res
+    res.status(200).json({
+      message: "condidate deleted",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+export { createNewCandidate, updatedCandidate, deleteCandidate };
