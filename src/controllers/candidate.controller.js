@@ -201,10 +201,30 @@ const voteCount = async (req, res) => {
   }
 };
 
+const getAllCandidates = async (req, res) => {
+  try {
+    // Excluding 'votes' and 'voteCount' fields with asc oder
+    let candidates = await Candidate.find()
+      .select("-votes -voteCount")
+      .sort({ party: "asc" });
+
+    // if not condidate
+    if (candidates.length === 0) {
+      return res.status(401).json({ message: "No candidates registered" });
+    }
+
+    res.json({ candidates });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 export {
   createNewCandidate,
   updatedCandidate,
   deleteCandidate,
   vote,
   voteCount,
+  getAllCandidates,
 };

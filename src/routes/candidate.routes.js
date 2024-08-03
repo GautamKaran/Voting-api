@@ -6,6 +6,7 @@ import {
   deleteCandidate,
   vote,
   voteCount,
+  getAllCandidates,
 } from "../controllers/candidate.controller.js";
 
 const router = Router();
@@ -15,5 +16,6 @@ router.route("/:candidateID").put(verifyJWT, updatedCandidate);
 router.route("/:candidateID").delete(verifyJWT, deleteCandidate);
 router.route("/vote/:candidateID").get(verifyJWT, vote);
 router.route("/voteCount").get(voteCount);
+router.route("/Candidate/lists").get(getAllCandidates);
 
 export default router;
