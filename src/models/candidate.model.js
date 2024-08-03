@@ -10,6 +10,7 @@ const candidateSchema = new mongoose.Schema({
     type: String,
     required: true,
     unqiue: true,
+    uppercase: true,
   },
   age: {
     type: Number,
