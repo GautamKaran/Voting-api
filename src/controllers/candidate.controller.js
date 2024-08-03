@@ -174,4 +174,37 @@ const vote = async (req, res) => {
   }
 };
 
-export { createNewCandidate, updatedCandidate, deleteCandidate, vote };
+const voteCount = async (req, res) => {
+  try {
+    // step1: find all candidates and sort them by voteCount in decrending order
+    const candidates = await Candidate.find()
+      .sort({ voteCount: -1 })
+      .select("-votes");
+
+    // step2: if condidate is empty
+    if (candidates.length === 0) {
+      return res.status(400).json({ message: "No candidates registered" });
+    }
+
+    // step3: res only party name and vote counts
+    const voteRecord = candidates.map((data) => {
+      return {
+        party: data.party,
+        count: data.voteCount,
+      };
+    });
+
+    return res.status(200).json(voteRecord);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export {
+  createNewCandidate,
+  updatedCandidate,
+  deleteCandidate,
+  vote,
+  voteCount,
+};
