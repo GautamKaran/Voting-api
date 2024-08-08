@@ -11,6 +11,7 @@ This Voting API allows users to register and log in using their Aadhar card numb
 - User data must include a unique government ID proof (Aadhar card number)
 - Admin can maintain the list of candidates but cannot vote
 - Users can change their passwords
+- Users will be forget password and set new password
 - User login using Aadhar card number and password
 
 ## API Endpoints
