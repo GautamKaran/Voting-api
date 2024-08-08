@@ -126,7 +126,7 @@ const signupUser = async (req, res) => {
   }
 };
 
-const singinUser = async (req, res) => {
+const loginUser = async (req, res) => {
   try {
     /**
      * ________________________________________
@@ -191,11 +191,12 @@ const singinUser = async (req, res) => {
         message: "User Sing-In Successfully",
       });
   } catch (error) {
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("error", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
-const singOutUser = async (req, res) => {
+const logoutUser = async (req, res) => {
   /**
    * ________________________________________
    *                                         *
@@ -253,7 +254,7 @@ const getProfile = async (req, res) => {
   }
 };
 
-const ChangePassword = async (req, res) => {
+const ChangeProfilePassword = async (req, res) => {
   /**
    * ________________________________________
    *                                         *
@@ -304,7 +305,7 @@ const ChangePassword = async (req, res) => {
   }
 };
 
-const forgetPassword = async (req, res) => {
+const forgetProfilePassword = async (req, res) => {
   try {
     /**
      * ________________________________________
@@ -340,55 +341,12 @@ const forgetPassword = async (req, res) => {
   }
 };
 
-const reset = async (req, res) => {
-  try {
-    /**
-     * ________________________________________
-     *                                         *
-     *      User reset Algorithm               *
-     * ________________________________________*
-     *
-     * step1: Extract user from req.params.token.
-     * step2: Generate access token.
-     * Step3: Send email with reset link.
-     */
-
-    // step1: Extract user from req.params.token.
-    const token = req.params.token;
-
-    if (!token) {
-      return res.status(404).json({ error: "Unauthorized request" });
-    }
-
-    // Step 2: Verify the token
-    const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
-
-    // Step 3: Find user by ID from the token
-    const user = await User.findById(decodedToken?._id);
-    if (!user) {
-      return res.status(400).json({ message: "user noty fond" });
-    }
-
-    // Step 4: Extract the new password from the request body
-    const { newPassword } = req.body;
-
-    // Step 6: Save the updated user
-    user.password = newPassword;
-    await user.save();
-
-    res.status(200).json({ message: "Password updated successfully" });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ message: error.message });
-  }
-};
 
 export {
   signupUser,
-  singinUser,
-  singOutUser,
+  loginUser,
+  logoutUser,
   getProfile,
-  ChangePassword,
-  forgetPassword,
-  reset,
+  ChangeProfilePassword,
+  forgetProfilePassword,
 };
