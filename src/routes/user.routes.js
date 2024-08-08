@@ -1,25 +1,22 @@
 import { Router } from "express";
 import {
   signupUser,
-  singinUser,
-  singOutUser,
+  loginUser,
+  logoutUser,
   getProfile,
-  ChangePassword,
-  forgetPassword,
-  reset,
+  ChangeProfilePassword,
+  forgetProfilePassword,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
 router.route("/signup").post(signupUser);
-router.route("/signin").post(singinUser);
-router.route("/reset/:token").post(reset);
+router.route("/login").post(loginUser);
+router.route("/logout").get(verifyJWT, logoutUser);
 
-// secure route
-router.route("/signout").post(verifyJWT, singOutUser);
 router.route("/profile").get(verifyJWT, getProfile);
-router.route("/changePassword").post(verifyJWT, ChangePassword);
-router.route("/forgetPassword").post(verifyJWT, forgetPassword);
+router.route("/profile/password").put(verifyJWT, ChangeProfilePassword);
+router.route("/profile/forget-password").put(forgetProfilePassword);
 
 export default router;
