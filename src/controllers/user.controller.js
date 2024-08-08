@@ -341,6 +341,62 @@ const forgetProfilePassword = async (req, res) => {
   }
 };
 
+const refreshAccessToken = async (req, res) => {
+  try {
+    //  Get refresh token from cookie or header.
+    const incomingRefreshToken =
+      req.cookie?.refreshToken ||
+      req.header("Authorization")?.replace("Bearer", "");
+
+    // chack incomingRefreshToken is empty
+    if (!incomingRefreshToken) {
+      return res.status(401).json({ error: "unauthorized request" });
+    }
+
+    // decodedToken with jwt verify
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    // ckeck is user by there objectID
+    const user = await User.findById(decodedToken?._id);
+    if (!user) {
+      return res.status(401).json({ error: "Invalid refresh token" });
+    }
+
+    // compair incomingRefreshToken into store db
+    if (incomingRefreshToken !== user?.refreshToken) {
+      return res
+        .status(401)
+        .json({ message: "Refresh token is expired or used" });
+    }
+
+    // genreteAccessAndRefreshToken
+    const { newRefreshToken, accessToken } = await genreteAccessAndRefreshToken(
+      user._id
+    );
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    // send res
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, options)
+      .json({
+        accessToken,
+        refreshToken: newRefreshToken,
+        message: "Access token refreshed",
+      });
+  } catch (error) {
+    console.error("errror in refreshAccessToken: ", error);
+    return res.status(401).json({ error: error?.message });
+  }
+};
 
 export {
   signupUser,
@@ -349,4 +405,5 @@ export {
   getProfile,
   ChangeProfilePassword,
   forgetProfilePassword,
+  refreshAccessToken,
 };
