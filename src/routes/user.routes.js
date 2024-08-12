@@ -7,6 +7,7 @@ import {
   ChangeProfilePassword,
   forgetProfilePassword,
   refreshAccessToken,
+  reset,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middleware/auth.middleware.js";
 
@@ -20,5 +21,6 @@ router.route("/refresh-token").post(refreshAccessToken);
 router.route("/profile").get(verifyJWT, getProfile);
 router.route("/profile/password").put(verifyJWT, ChangeProfilePassword);
 router.route("/profile/forget-password").put(forgetProfilePassword);
+router.route("/reset/:token").post(reset);
 
 export default router;
