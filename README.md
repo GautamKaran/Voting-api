@@ -4,7 +4,7 @@ This Voting API allows users to register and log in using their Aadhar card numb
 
 ## Features
 
-- User sign in or sign up
+- User sign up or login or logout or refresh-token
 - See the list of candidates
 - Vote for a candidate (each user can vote only once)
 - Live vote counts for candidates, sorted by vote count
@@ -18,30 +18,33 @@ This Voting API allows users to register and log in using their Aadhar card numb
 
 ##### User Authentication
 
-| Method | Endpoint    | Description                   |
-| ------ | ----------- | ----------------------------- |
-| POST   | `/signup` | Create a new user account     |
-| POST   | `/login`  | Log in to an existing account |
+| Method | Endpoint            | Description                          |
+| ------ | ------------------- | ------------------------------------ |
+| POST   | `/signup`         | Create a new user account            |
+| POST   | `/login`          | Log in to an existing account        |
+| GET    | `/logout`         | Logout to an existing account        |
+| POST   | `/refresh-token ` | refresh & Access token will refresh |
 
 ##### Voting
 
 | Method | Endpoint               | Description                     |
 | ------ | ---------------------- | ------------------------------- |
-| GET    | `/candidates`        | Retrieve the list of candidates |
+| GET    | `/candidates/list`   | Retrieve the list of candidates |
 | POST   | `/vote/:candidateId` | Vote for a specific candidate   |
 
 ##### Vote Counts
 
 | Method | Endpoint         | Description                                      |
 | ------ | ---------------- | ------------------------------------------------ |
-| GET    | `/vote/counts` | Get the list of candidates sorted by vote counts |
+| GET    | `/votes/count` | Get the list of candidates sorted by vote counts |
 
 ##### User Profile
 
-| Method | Endpoint              | Description                             |
-| ------ | --------------------- | --------------------------------------- |
-| GET    | `/profile`          | Retrieve the user's profile information |
-| PUT    | `/profile/password` | Change the user's password              |
+| Method | Endpoint                      | Description                             |
+| ------ | ----------------------------- | --------------------------------------- |
+| GET    | `/profile`                  | Retrieve the user's profile information |
+| PUT    | `/profile/password`         | Change the user's password              |
+| PUT    | `/profile/forget-password ` | User will forget their password         |
 
 ##### Admin Candidate Management
 
@@ -89,16 +92,28 @@ To run this project, you will need to add the following environment variables to
 PORT=3000
 MONGODB_URI=mongodb+srv://your-username:your-password@cluster0.lxl3fsq.mongodb.net
 mongoDB_local_URL=mongodb://localhost:27017/
+
 CORS_ORIGIN=*
+
+ACCESS_TOKEN_SECRET=votingApp
+ACCESS_TOKEN_EXPIRY=1d
+
+REFRESH_TOKEN_SECRET=KaranGuatam
+REFRESH_TOKEN_EXPIRY=10d
+
+Email_ID=karangautam2023@gmail.com
+Email_Password=gautam
 ```
 
 ## Start the Server
 
-To satrt server, run the following command
+To start server, run the following command
 
 ```
   npm run start
 
+  # Devepment run command
+  npm run dev
 ```
 
 ### Localhost Link
