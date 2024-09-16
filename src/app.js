@@ -1,9 +1,8 @@
-import dotenv from "dotenv";
+import 'dotenv/config'
 import express from "express";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-dotenv.config();
 const app = express();
 
 // cors setup here
