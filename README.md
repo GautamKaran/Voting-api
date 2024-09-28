@@ -1,4 +1,4 @@
-<h1 align="center" id="title">🎉 Voting API 🎉</h1>
+<h1 align="center" id="title">🎉  Voting API  🎉</h1>
 
 This Voting API allows users to register and log in using their Aadhar card numbers. Users can view a list of candidates and cast their votes, with the restriction that each user can vote only once. The API also provides live vote counts for candidates, displayed in sorted order. An admin can manage the candidate list but is not permitted to vote. Additionally, users can change their passwords, ensuring a secure voting environment.
 
