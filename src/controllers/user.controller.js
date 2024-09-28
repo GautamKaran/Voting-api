@@ -448,5 +448,5 @@ export {
   ChangeProfilePassword,
   forgetProfilePassword,
   refreshAccessToken,
-  reset
+  reset,
 };
