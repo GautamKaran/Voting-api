@@ -1,0 +1,224 @@
+openapi: 3.0.3
+info:
+  title: Voting-APIs
+  description: >
+    This Voting API allows users to register and log in using their Aadhar card numbers. Users can view a list of candidates and cast their votes, with the restriction that each user can vote only once. The API also provides live vote counts for candidates, displayed in sorted order. An admin can manage the candidate list but is not permitted to vote. Additionally, users can change their passwords, ensuring a secure voting environment.
+
+    ## Features
+      1. User sign-up, login, logout, and refresh-token functionality.
+      2. View a comprehensive list of candidates.
+      3. Vote for a candidate (limited to one vote per user).
+      4. Access live vote counts for candidates, sorted by vote count.
+      5. User data must include a unique government ID proof (Aadhar card number).
+      6. Admin privileges to maintain the candidate list without voting rights.
+      7. Users can update their passwords for enhanced security.
+      8. Password reset functionality for forgotten credentials.
+      9. Login using Aadhar card number and password.
+
+  version: 1.3.1
+  contact:
+    name: karan Guatam
+    email: karankumargautam.dev@gmail.com
+    url: https://github.com/GautamKaran/Voting-api
+servers:
+  - url: ${{server}}
+
+tags:
+  - name: 🔐 User Authentication
+    description: >-
+      This section for APIs related to user signup, login, logout, and token refresh.
+  - name: 🪪 User Profile
+    description: >-
+      This section for APIs related to user profile management.
+  - name: 🗳️ Voting
+    description: >-
+      This section for APIs related to viewing candidates and voting for them.
+  - name: 🚀 Vote Counts
+    description: >-
+      This section for APIs for retrieving candidate vote counts.
+  - name: 🛡️ Admin Candidate Management
+    description: >-
+      This section for APIs for admin users to manage candidates.
+
+paths:
+  /users/signup:
+    post:
+      tags:
+        - 🔐 User Authentication
+
+      summary: Sign-up API
+      description: >-
+        Allows users to sign up using their Aadhar card number, password, and other relevant details.
+      operationId: signupUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: karan
+                age:
+                  type: integer
+                  example: 20
+                email:
+                  type: string
+                  example: user.email@domain.com
+                aadharCardNumber:
+                  type: integer
+                  example: 123456789012
+                address:
+                  type: string
+                  example: 123, ABC Street XYZ City
+                mobileNumber:
+                  type: integer
+                  example: 9648775490
+                role:
+                  type: string
+                  enum: [voter, admin]
+                  example: voter # only one admin allowed
+                password:
+                  type: string
+                  example: test@123
+      responses:
+        "201":
+          description: User Signup successfully
+        "400":
+          description: >
+            1. All fields are required.
+            2. You are not eligible to vote.
+            3. Aadhar Card Number must be exactly 12 digits.
+            4. User with the same Aadhar Card Number already exists.
+            5. Admin user already exists.
+  /users/login:
+    post:
+      tags:
+        - 🔐 User Authentication
+
+      summary: Login to an existing account
+      description: >-
+        The API endpoint allows users to log into the application securely and
+         also returns an access token.
+
+
+         When accessing this endpoint with valid login credentials, users will
+         receive an access token in the response.
+
+
+         Additionally, the API endpoint securely sets the access token within the
+         browser/client httpOnly cookies for future authentication and
+         authorization purposes.
+
+      operationId: LoginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                aadharCardNumber:
+                  type: integer
+                  example: 123456789012
+                password:
+                  type: string
+                  example: test@123
+      responses:
+        "201":
+          description: User Sing-In Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: number
+                    example: 200
+                  user:
+                    type: object
+                    properties:
+                      signedInUser:
+                        type: object
+                        properties:
+                          _id:
+                            type: string
+                            example: 66f9017c99ea80c3594e9b30
+                          name:
+                            type: string
+                            example: karan
+                          age:
+                            type: number
+                            example: 20
+                          email:
+                            type: string
+                            example: user.email@domain.com
+                          mobileNumber:
+                            type: number
+                            example: 9648775490
+                          address:
+                            type: string
+                            example: 123, ABC Street XYZ City
+                          aadharCardNumber:
+                            type: number
+                            example: 123456789012
+                          role:
+                            type: string
+                            example: voter
+                          isVoted:
+                            type: bool
+                            example: false
+                          createdAt:
+                            type: string
+                            example: 2024-09-29T07:27:56.802Z
+                          updatedAt:
+                            type: string
+                            example: 2024-09-29T07:48:36.242Z
+                          _v:
+                            type: number
+                            example: 0
+                  accessToken:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmY5MDE3Yzk5ZWE4MGMzNTk0ZTliMzAiLCJlbWFpbCI6InVzZXIuZW1haWxAZG9tYWluLmNvbSIsImlhdCI6MTcyNzU5NjExNiwiZXhwIjoxNzI3NjgyNTE2fQ.GNHZCgzrOyHvBkyvCXFuCsBurNNWt200pRAaXbMy8Ho
+
+                  refreshToken:
+                    type: string
+                    example: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmY5MDE3Yzk5ZWE4MGMzNTk0ZTliMzAiLCJpYXQiOjE3Mjc1OTYxMTYsImV4cCI6MTcyODQ2MDExNn0._ArHPLsGbxd9aJbxIBdHTYjFGfGDOTgGqV750zNnA9c
+
+                  message:
+                    type: string
+                    example: User Sing-In Successfully
+
+        "400":
+          description: >-
+            Aadhar Card Number and password are required
+        "401":
+          description: >-
+            Invalid Password !!
+        "404":
+          description: >-
+            Invalid Aadhar Card Number
+  /users/logout:
+    get:
+      tags:
+        - 🔐 User Authentication
+
+      summary: Logout from an existing account
+      description: >-
+        The API endpoint is responsible for logging out users from the
+        application and destroying the access token cookies stored on the
+        client-side.
+
+
+        When accessing this endpoint, it triggers the logout process, revoking
+        the user's authentication and terminating their active session.
+
+
+        Additionally, it ensures that any access token cookies associated with
+        the user's session are removed from the client's browser, effectively
+        logging them out from the application.
+      operationId: logoutUser
+      responses:
+        "200":
+          description: Logout user successfully
+        "404":
+          description: Unauthorized request
