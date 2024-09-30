@@ -42,7 +42,7 @@ app.use("/api/v1/candidate", condidateRouter);
 
 // for swagger docs
 app.use(
-  "/",
+  "/api-docs",
   swaggerUi.serve,
   swaggerUi.setup(swaggerDocument, {
     swaggerOptions: {
