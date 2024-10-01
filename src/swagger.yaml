@@ -41,6 +41,7 @@ tags:
       This section for APIs for admin users to manage candidates.
 
 paths:
+  #============== User Authentication ========#
   /users/signup:
     post:
       tags:
@@ -222,3 +223,238 @@ paths:
           description: Logout user successfully
         "404":
           description: Unauthorized request
+  # TODO: ADD /users/refreshToken =>
+
+  #================= User Profile ==============#
+  /users/profile:
+    get:
+      tags:
+        - 🪪 User Profile
+
+      summary: Retrieve the user's profile information
+      description: >-
+        The API endpoint is responsible for get login users profile information
+      operationId: userProfile
+      responses:
+        "201":
+          description: User Sing-In Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userDetails:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                        example: 66f9017c99ea80c3594e9b30
+                      name:
+                        type: string
+                        example: karan
+                      age:
+                        type: number
+                        example: 20
+                      email:
+                        type: string
+                        example: user.email@domain.com
+                      mobileNumber:
+                        type: number
+                        example: 9648775490
+                      address:
+                        type: string
+                        example: 123, ABC Street XYZ City
+                      aadharCardNumber:
+                        type: number
+                        example: 123456789012
+                      role:
+                        type: string
+                        example: voter
+                      isVoted:
+                        type: bool
+                        example: false
+                      createdAt:
+                        type: string
+                        example: 2024-09-29T07:27:56.802Z
+                      updatedAt:
+                        type: string
+                        example: 2024-09-29T07:48:36.242Z
+                      _v:
+                        type: number
+                        example: 0
+  /users/profile/password:
+    put:
+      tags:
+        - 🪪 User Profile
+
+      summary: Retrieve the user's profile information
+      description: >-
+        The API endpoint is responsible for get login users profile information
+      operationId: update-profile-passeword
+      requestBody:
+        description: >-
+          Password change request
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                  example: test@123
+                newPassword:
+                  type: string
+                  example: 123@test
+      responses:
+        "200":
+          description: Password changed successfully
+        "400":
+          description: nvalid old password
+  # TODO: ADD /users/profile/forget-password =>
+  # TODO: ADD /users/reset-password/{token} =>
+
+  # ================== Voting ==================#
+  /candidate/lists/:
+    get:
+      tags:
+        - 🗳️ Voting
+      summary: Retrieve the list of candidates
+      description: >-
+        Allows users get lista of candidates to vote them.
+      operationId: listOfCondidates
+      responses:
+        "201":
+          description: Candidate Created Successfully
+        "401":
+          description: No candidates registered
+        "500":
+          description: internal Server error
+  /candidate/vote/{candidateID}:
+    get:
+      tags:
+        - 🗳️ Voting
+      summary: Vote for a specific candidate
+      description: >-
+        Allows voter to vote for their specific candidate.
+      operationId: voteForCandidates
+      parameters:
+        - name: candidateID
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 1
+      responses:
+        "200":
+          description: Vote cast successfully
+        "404":
+          description: Candidate not found
+
+  # ================= Vote Counts ===============#
+  /candidate/votes/count:
+    get:
+      tags:
+        - 🚀 Vote Counts
+
+      summary: Get the list of candidates sorted by vote counts
+      description: >-
+        The API endpoint is List of candidates sorted by votes
+      operationId: voteCount
+      responses:
+        "201":
+          description: vote count
+
+  #============ Admin Candide Management ==========#
+  /candidate:
+    post:
+      tags:
+        - 🛡️ Admin Candidate Management
+      summary: Create a new candidate.
+      description: >-
+        Only admin create ne Candidate for vote
+      operationId: condidate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Modi
+                party:
+                  type: string
+                  example: BJP
+                age:
+                  type: integer
+                  example: 60
+
+      responses:
+        "200":
+          description: Candidate Created Successfully
+        "403":
+          description: Access denied
+        "400":
+          description: All fields are required
+        "500":
+          description: Internal server error
+
+  /candidate/update/{candidateID}:
+    put:
+      tags:
+        - 🛡️ Admin Candidate Management
+      summary: Update an existing candidate
+      description: >-
+        Allows admin update condidate details and that will refelate in condidate lists.
+      operationId: upadateCandidates
+      parameters:
+        - name: candidateID
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: Medi
+                party:
+                  type: string
+                  example: BJP
+                age:
+                  type: integer
+                  example: 69
+
+      responses:
+        "200":
+          description: Candidate updated successfully
+        "404":
+          description: Candidate not found
+
+  /candidate/delete/{candidateID}:
+    delete:
+      tags:
+        - 🛡️ Admin Candidate Management
+      summary: delete an existing candidate
+      description: >-
+        Allows admin delete condidate details and that will refelate in condidate lists.
+      operationId: deleteCandidates
+      parameters:
+        - name: candidateID
+          in: path
+          required: true
+          schema:
+            type: string
+            example: 1
+
+      responses:
+        "200":
+          description: Candidate updated successfully
+        "404":
+          description: Candidate not found
