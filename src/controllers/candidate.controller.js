@@ -130,14 +130,6 @@ const vote = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    if (checkAdminRole(user)) {
-      return res.status(403).json({ message: "Admin is not allowed to vote" });
-    }
-
-    if (user.isVoted) {
-      return res.status(400).json({ message: "You have already voted" });
-    }
-
     // ---------------------- get candidate -----------------//
     const candidateID = req.params.candidateID;
 
@@ -154,6 +146,14 @@ const vote = async (req, res) => {
     const candidate = await Candidate.findById(candidateID);
     if (!candidate) {
       return res.status(404).json({ message: "Candidate not found" });
+    }
+
+    if (checkAdminRole(user)) {
+      return res.status(403).json({ message: "Admin is not allowed to vote" });
+    }
+
+    if (user.isVoted) {
+      return res.status(400).json({ message: "You have already voted" });
     }
 
     // upadate the Candidate document to record the vote
