@@ -20,6 +20,10 @@ const createNewCandidate = async (req, res) => {
       age,
     });
 
+    if (age < 20) {
+      return res.status(400).json({ error: "You are not eligible to be a candidate" });
+    }
+    
     const response = await newCandidate.save();
 
     res.status(200).json({
