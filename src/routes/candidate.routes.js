@@ -12,8 +12,8 @@ import {
 const router = Router();
 
 router.route("/").post(verifyJWT, createNewCandidate);
-router.route("/:candidateID").put(verifyJWT, updatedCandidate);
-router.route("/:candidateID").delete(verifyJWT, deleteCandidate);
+router.route("/update/:candidateID").put(verifyJWT, updatedCandidate);
+router.route("/delete/:candidateID").delete(verifyJWT, deleteCandidate);
 router.route("/vote/:candidateID").get(verifyJWT, vote);
 router.route("/votes/count").get(voteCount);
 router.route("/lists/").get(getAllCandidates);
