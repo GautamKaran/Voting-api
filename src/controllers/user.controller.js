@@ -345,7 +345,7 @@ const refreshAccessToken = async (req, res) => {
   try {
     //  Get refresh token from cookie or header.
     const incomingRefreshToken =
-      req.cookie?.refreshToken ||
+      req.cookies?.refreshToken ||
       req.header("Authorization")?.replace("Bearer", "");
 
     // chack incomingRefreshToken is empty
@@ -373,7 +373,7 @@ const refreshAccessToken = async (req, res) => {
     }
 
     // genreteAccessAndRefreshToken
-    const { newRefreshToken, accessToken } = await genreteAccessAndRefreshToken(
+    const { accessToken, refreshToken } = await genreteAccessAndRefreshToken(
       user._id
     );
 
@@ -386,10 +386,10 @@ const refreshAccessToken = async (req, res) => {
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, options)
+      .cookie("refreshToken", refreshToken, options)
       .json({
         accessToken,
-        refreshToken: newRefreshToken,
+        refreshToken: refreshToken,
         message: "Access token refreshed",
       });
   } catch (error) {
