@@ -225,7 +225,7 @@ paths:
           description: Unauthorized request
   /users/refresh-token:
     post:
-      tags: 
+      tags:
         - 🔐 User Authentication
       summary: Refresh token
       description: >-
@@ -251,7 +251,7 @@ paths:
         access to authorized endpoints.
       operationId: refreshToken
       responses:
-        '200':
+        "200":
           description: Refresh token
   #================= User Profile ==============#
   /users/profile:
@@ -339,9 +339,69 @@ paths:
           description: Password changed successfully
         "400":
           description: nvalid old password
-  # TODO: ADD /users/profile/forget-password =>
-  # TODO: ADD /users/reset-password/{token} =>
+  /users/profile/forget-password:
+    put:
+      tags:
+        - 🪪 User Profile
 
+      summary: Forget the user's password
+      description: >-
+        Request to reset the password
+      operationId: forget-passeword
+      requestBody:
+        description: >-
+          Forget the user's password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                aadharCardNumber:
+                  type: string
+                  example: 123456789012
+      responses:
+        "200":
+          description: Please check your inbox for the email.
+        "400":
+          description: Invalid Aadhar Card Number
+        "500":
+          description: internal server error
+  /users/reset-password:
+    put:
+      tags:
+        - 🪪 User Profile
+
+      summary: Forget the user's password
+      description: >-
+        Request to reset the password
+      operationId: reset-passeword
+      requestBody:
+        description: >-
+          Forget the user's password
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                aadharCardNumber:
+                  type: string
+                  example: 123456789012
+                otp:
+                  type: string
+                  example: 123456789012
+                newPassword:
+                  type: string
+                  example: 123456789012
+      responses:
+        "200":
+          description: Please check your inbox for the email.
+        "400":
+          description: Invalid Aadhar Card Number
+        "500":
+          description: internal server error
+ 
   # ================== Voting ==================#
   /candidate/lists/:
     get:
