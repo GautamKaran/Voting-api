@@ -21,6 +21,6 @@ router.route("/refresh-token").post(refreshAccessToken);
 router.route("/profile").get(verifyJWT, getProfile);
 router.route("/profile/password").put(verifyJWT, ChangeProfilePassword);
 router.route("/profile/forget-password").put(forgetProfilePassword);
-router.route("/reset-password/:token").post(reset);
+router.route("/reset-password").put(reset);
 
 export default router;
