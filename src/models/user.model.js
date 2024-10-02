@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       lowercase: true,
+      required: true, // because send email on this
     },
     mobileNumber: {
       type: String,
@@ -48,6 +49,12 @@ const userSchema = new mongoose.Schema(
     refreshToken: {
       type: String,
     },
+    resetOtp: {
+      type: String,
+    }, // OTP for password reset
+    resetOtpExpires: {
+      type: Date,
+    }, // OTP expiration time
   },
   {
     timestamps: true,
@@ -78,7 +85,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
 };
 
 // Method to generate an access token for the user
-userSchema.methods.generateAccessToken  = function () {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
