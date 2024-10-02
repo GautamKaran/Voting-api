@@ -223,8 +223,36 @@ paths:
           description: Logout user successfully
         "404":
           description: Unauthorized request
-  # TODO: ADD /users/refreshToken =>
+  /users/refresh-token:
+    post:
+      tags: 
+        - 🔐 User Authentication
+      summary: Refresh token
+      description: >-
+        The Refresh Access Token API is responsible for refreshing the access
+        token when it expires.
 
+
+        It allows you to make a request to this endpoint with the refresh token,
+        which has a lengthy expiry time, to obtain a new access token.
+
+
+        Simultaneously, the API sets the new access token in a cookie for future
+        authentication purposes while replacing the expired one.
+
+
+        This functionality ensures continuous access to protected resources by
+        automatically renewing the access token **without requiring the user to
+        reauthenticate manually**.
+
+
+        By utilizing the refresh token, the API securely refreshes the access
+        token and updates it in the cookie, ensuring seamless and uninterrupted
+        access to authorized endpoints.
+      operationId: refreshToken
+      responses:
+        '200':
+          description: Refresh token
   #================= User Profile ==============#
   /users/profile:
     get:
