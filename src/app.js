@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cookieParser from "cookie-parser";
+import helmet from "helmet";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 import path from "path";
@@ -27,6 +28,7 @@ app.use(
   })
 );
 
+app.use(helmet()); // use helmet.js to secure HTTP headers
 app.use(express.json({ limit: "16kb" })); // form data
 app.use(express.urlencoded({ extended: true, limit: "16kb" })); // url data
 app.use(express.static("public"));
